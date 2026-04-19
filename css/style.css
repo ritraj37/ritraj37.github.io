@@ -22,7 +22,19 @@ body {
   --text-muted: #6b7280;
   --border: #e5e7eb;
 }
-
+/* ===== HERO NAME ===== */
+.hero-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  padding-bottom: 0.1em;        /* prevents gradient clipping on descenders */
+  background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 40%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;        /* required for bg-clip to work reliably */
+}
 /* ===== HERO GRADIENT ===== */
 .hero-gradient {
   background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 25%, #f5f0ff 50%, #eef4ff 75%, #f8f6ff 100%);
