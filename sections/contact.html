@@ -1,0 +1,102 @@
+<section id="contact" class="py-24 bg-white">
+  <div class="max-w-5xl mx-auto px-6">
+
+    <div class="text-center mb-16 fade-up">
+      <p class="section-label mb-2">// contact</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Get In Touch</h2>
+      <p class="text-gray-500 mt-3 text-sm">Have an opportunity or just want to say hi? My inbox is always open.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-10">
+
+      <!-- Contact Info -->
+      <div class="fade-up">
+        <h3 class="text-xl font-semibold text-gray-900 mb-6">Let's Connect</h3>
+        <div class="space-y-4">
+
+          <a href="mailto:rituraj.11022002@gmail.com"
+            class="contact-card glass flex items-center gap-4 p-4 rounded-2xl group">
+            <div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center group-hover:bg-indigo-200 transition-colors flex-shrink-0">
+              <i data-lucide="mail" style="width:20px;height:20px;color:#6366f1"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400">Email</p>
+              <p class="text-gray-700 font-medium text-sm">rituraj.11022002@gmail.com</p>
+            </div>
+          </a>
+
+          <a href="tel:+916204081483"
+            class="contact-card glass flex items-center gap-4 p-4 rounded-2xl group">
+            <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-200 transition-colors flex-shrink-0">
+              <i data-lucide="phone" style="width:20px;height:20px;color:#10b981"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400">Phone</p>
+              <p class="text-gray-700 font-medium text-sm">+91 6204081483</p>
+            </div>
+          </a>
+
+          <a href="https://linkedin.com/in/rituraj" target="_blank" rel="noopener noreferrer"
+            class="contact-card glass flex items-center gap-4 p-4 rounded-2xl group">
+            <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors flex-shrink-0">
+              <i data-lucide="linkedin" style="width:20px;height:20px;color:#3b82f6"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400">LinkedIn</p>
+              <p class="text-gray-700 font-medium text-sm">linkedin.com/in/rituraj</p>
+            </div>
+          </a>
+
+          <a href="https://github.com/rituraj" target="_blank" rel="noopener noreferrer"
+            class="contact-card glass flex items-center gap-4 p-4 rounded-2xl group">
+            <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors flex-shrink-0">
+              <i data-lucide="github" style="width:20px;height:20px;color:#374151"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400">GitHub</p>
+              <p class="text-gray-700 font-medium text-sm">github.com/rituraj</p>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="fade-up">
+        <form id="contact-form" class="glass rounded-2xl p-6 space-y-4">
+          <div>
+            <label for="cf-name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <input id="cf-name" type="text" placeholder="Your name" required
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition text-sm">
+          </div>
+          <div>
+            <label for="cf-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input id="cf-email" type="email" placeholder="your@email.com" required
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition text-sm">
+          </div>
+          <div>
+            <label for="cf-subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+            <input id="cf-subject" type="text" placeholder="What's this about?"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition text-sm">
+          </div>
+          <div>
+            <label for="cf-msg" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+            <textarea id="cf-msg" rows="4" placeholder="Your message..." required
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition text-sm resize-none"></textarea>
+          </div>
+          <button type="submit"
+            class="btn-primary text-white w-full py-3 rounded-xl font-medium text-sm inline-flex items-center justify-center gap-2">
+            <i data-lucide="send" style="width:16px;height:16px"></i> Send Message
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Toast -->
+<div id="toast" class="toast fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-xl text-sm font-medium z-50 shadow-xl flex items-center gap-2">
+  <i data-lucide="check-circle" style="width:16px;height:16px;color:#4ade80"></i>
+  <span id="toast-msg">Message sent!</span>
+</div>
