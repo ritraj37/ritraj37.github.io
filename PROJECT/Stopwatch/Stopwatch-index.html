@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stopwatch</title>
+  <style>
+    /* ===== PROJECT NAVBAR ===== */
+    .proj-nav {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 999;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99,102,241,0.12);
+      box-shadow: 0 2px 12px rgba(99,102,241,0.08);
+    }
+    .proj-nav-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 24px; height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .proj-nav-brand {
+      font-size: 1.1rem; font-weight: 800;
+      background: linear-gradient(135deg,#6366f1,#8b5cf6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; text-decoration: none;
+    }
+    .proj-nav-title {
+      font-size: 0.85rem; font-weight: 600; color: #6b7280;
+      background: rgba(99,102,241,0.08); padding: 4px 14px;
+      border-radius: 999px; border: 1px solid rgba(99,102,241,0.15);
+    }
+    .proj-nav-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.85rem; font-weight: 600; color: #6366f1;
+      text-decoration: none; padding: 7px 16px; border-radius: 10px;
+      border: 1.5px solid #e0e7ff; background: #fafbff; transition: all 0.2s;
+    }
+    .proj-nav-back:hover { background: #eef2ff; border-color: #6366f1; }
+    /* ========================= */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #14b8a6, #2dd4bf);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 58px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 48px 40px;
+      width: 380px;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.15);
+    }
+    h1 { font-size: 1.4rem; color: #1f2937; margin-bottom: 4px; }
+    .subtitle { font-size: 0.85rem; color: #9ca3af; margin-bottom: 36px; }
+
+    .display {
+      background: #f0fdfa;
+      border-radius: 20px;
+      padding: 32px 20px;
+      margin-bottom: 32px;
+      border: 2px solid #99f6e4;
+    }
+    .time {
+      font-size: 3.5rem;
+      font-weight: 800;
+      font-family: 'Courier New', monospace;
+      color: #0f766e;
+      letter-spacing: 2px;
+    }
+    .milliseconds {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #14b8a6;
+      font-family: 'Courier New', monospace;
+    }
+
+    .controls { display: flex; gap: 12px; justify-content: center; margin-bottom: 28px; }
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.2s;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+    .btn-start  { background: linear-gradient(135deg, #14b8a6, #0d9488); color: #fff; flex: 1; }
+    .btn-stop   { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; flex: 1; }
+    .btn-reset  { background: #f3f4f6; color: #374151; }
+    .btn-lap    { background: #e0f2fe; color: #0369a1; }
+
+    .laps-title { font-size: 0.85rem; font-weight: 600; color: #6b7280; text-align: left; margin-bottom: 10px; }
+    .laps-list  { max-height: 180px; overflow-y: auto; }
+    .lap-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      background: #f9fafb;
+      font-family: 'Courier New', monospace;
+    }
+    .lap-item:nth-child(odd) { background: #f0fdfa; }
+    .lap-num { color: #9ca3af; font-weight: 600; }
+    .lap-time { color: #0f766e; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <nav class="proj-nav">
+    <div class="proj-nav-inner">
+      <a href="../../index.html" class="proj-nav-brand">Ritu Raj</a>
+      <span class="proj-nav-title">Stopwatch</span>
+      <a href="../../index.html#mini-projects" class="proj-nav-back">&#8592; Back to Portfolio</a>
+    </div>
+  </nav>
+  <div class="card">
+    <p class="subtitle">Precision timer with lap tracking</p>
+
+    <div class="display">
+      <div class="time" id="time">00:00</div>
+      <div class="milliseconds">.<span id="ms">00</span></div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-start" id="start-btn" onclick="startStop()">Start</button>
+      <button class="btn btn-reset" onclick="reset()">Reset</button>
+      <button class="btn btn-lap" onclick="lap()">Lap</button>
+    </div>
+
+    <div class="laps-title">Lap Times</div>
+    <div class="laps-list" id="laps-list"></div>
+  </div>
+
+  <script>
+    let running = false, interval = null, elapsed = 0, lapCount = 0;
+
+    function startStop() {
+      if (running) {
+        clearInterval(interval);
+        running = false;
+        document.getElementById('start-btn').textContent = 'Resume';
+        document.getElementById('start-btn').className = 'btn btn-start';
+      } else {
+        const start = Date.now() - elapsed;
+        interval = setInterval(() => { elapsed = Date.now() - start; updateDisplay(); }, 10);
+        running = true;
+        document.getElementById('start-btn').textContent = 'Stop';
+        document.getElementById('start-btn').className = 'btn btn-stop';
+      }
+    }
+
+    function reset() {
+      clearInterval(interval);
+      running = false; elapsed = 0; lapCount = 0;
+      document.getElementById('start-btn').textContent = 'Start';
+      document.getElementById('start-btn').className = 'btn btn-start';
+      document.getElementById('time').textContent = '00:00';
+      document.getElementById('ms').textContent = '00';
+      document.getElementById('laps-list').innerHTML = '';
+    }
+
+    function lap() {
+      if (!running) return;
+      lapCount++;
+      const t = formatTime(elapsed);
+      const item = document.createElement('div');
+      item.className = 'lap-item';
+      item.innerHTML = `<span class="lap-num">Lap ${lapCount}</span><span class="lap-time">${t.main}.${t.ms}</span>`;
+      document.getElementById('laps-list').prepend(item);
+    }
+
+    function formatTime(ms) {
+      const totalSec = Math.floor(ms / 1000);
+      const min = Math.floor(totalSec / 60).toString().padStart(2, '0');
+      const sec = (totalSec % 60).toString().padStart(2, '0');
+      const msec = Math.floor((ms % 1000) / 10).toString().padStart(2, '0');
+      return { main: `${min}:${sec}`, ms: msec };
+    }
+
+    function updateDisplay() {
+      const t = formatTime(elapsed);
+      document.getElementById('time').textContent = t.main;
+      document.getElementById('ms').textContent = t.ms;
+    }
+  </script>
+</body>
+</html>

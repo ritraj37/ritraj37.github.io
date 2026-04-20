@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Game</title>
+  <style>
+    /* ===== PROJECT NAVBAR ===== */
+    .proj-nav {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 999;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99,102,241,0.12);
+      box-shadow: 0 2px 12px rgba(99,102,241,0.08);
+    }
+    .proj-nav-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 24px; height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .proj-nav-brand {
+      font-size: 1.1rem; font-weight: 800;
+      background: linear-gradient(135deg,#6366f1,#8b5cf6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; text-decoration: none;
+    }
+    .proj-nav-title {
+      font-size: 0.85rem; font-weight: 600; color: #6b7280;
+      background: rgba(99,102,241,0.08); padding: 4px 14px;
+      border-radius: 999px; border: 1px solid rgba(99,102,241,0.15);
+    }
+    .proj-nav-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.85rem; font-weight: 600; color: #6366f1;
+      text-decoration: none; padding: 7px 16px; border-radius: 10px;
+      border: 1.5px solid #e0e7ff; background: #fafbff; transition: all 0.2s;
+    }
+    .proj-nav-back:hover { background: #eef2ff; border-color: #6366f1; }
+    /* ========================= */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0891b2, #22d3ee);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 58px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px;
+      width: 480px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .q-count { font-size: 0.85rem; color: #6b7280; font-weight: 500; }
+    .score-badge { background: #e0f2fe; color: #0891b2; font-size: 0.85rem; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+
+    .progress-bar { width: 100%; height: 6px; background: #f3f4f6; border-radius: 999px; margin-bottom: 28px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #0891b2, #22d3ee); border-radius: 999px; transition: width 0.4s; }
+
+    .question { font-size: 1.1rem; font-weight: 700; color: #111827; margin-bottom: 24px; line-height: 1.5; }
+
+    .options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+    .option-btn {
+      padding: 14px 18px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fff;
+      font-size: 0.9rem;
+      color: #374151;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .option-btn:hover:not(:disabled) { border-color: #0891b2; background: #e0f2fe; color: #0891b2; }
+    .option-btn.correct  { border-color: #10b981; background: #d1fae5; color: #065f46; }
+    .option-btn.wrong    { border-color: #ef4444; background: #fee2e2; color: #991b1b; }
+
+    #next-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #0891b2, #22d3ee);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      transition: opacity 0.2s;
+    }
+    #next-btn:hover { opacity: 0.9; }
+
+    .result { text-align: center; }
+    .result h2 { font-size: 1.8rem; color: #111827; margin-bottom: 8px; }
+    .result .final-score { font-size: 3rem; font-weight: 800; color: #0891b2; margin: 16px 0; }
+    .result p { color: #6b7280; margin-bottom: 24px; }
+    .result button {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #0891b2, #22d3ee);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <nav class="proj-nav">
+    <div class="proj-nav-inner">
+      <a href="../../index.html" class="proj-nav-brand">Ritu Raj</a>
+      <span class="proj-nav-title">Quiz Game</span>
+      <a href="../../index.html#mini-projects" class="proj-nav-back">&#8592; Back to Portfolio</a>
+    </div>
+  </nav>
+  <div class="card">
+      <div class="header">
+        <span class="q-count" id="q-count">Question 1 of 5</span>
+        <span class="score-badge">Score: <span id="score">0</span></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress" style="width:20%"></div></div>
+      <div class="question" id="question"></div>
+      <div class="options" id="options"></div>
+      <button id="next-btn" onclick="nextQuestion()">Next Question &#8594;</button>
+    </div>
+    <div id="result-screen" class="result" style="display:none">
+      <div style="font-size:3rem">&#127881;</div>
+      <h2>Quiz Complete!</h2>
+      <div class="final-score" id="final-score"></div>
+      <p id="result-msg"></p>
+      <button onclick="restartQuiz()">Play Again</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      { q: 'What does HTML stand for?', options: ['Hyper Text Markup Language','High Tech Modern Language','Hyper Transfer Markup Logic','None of these'], answer: 0 },
+      { q: 'Which language is used for styling web pages?', options: ['HTML','JavaScript','CSS','Python'], answer: 2 },
+      { q: 'What does CSS stand for?', options: ['Computer Style Sheets','Creative Style Syntax','Cascading Style Sheets','Colorful Style Sheets'], answer: 2 },
+      { q: 'Which of the following is a JavaScript framework?', options: ['Django','Laravel','React','Flask'], answer: 2 },
+      { q: 'What does SQL stand for?', options: ['Structured Query Language','Simple Query Logic','Standard Question Language','System Query List'], answer: 0 },
+    ];
+
+    let current = 0, score = 0, answered = false;
+
+    function loadQuestion() {
+      answered = false;
+      const q = questions[current];
+      document.getElementById('q-count').textContent = `Question ${current+1} of ${questions.length}`;
+      document.getElementById('progress').style.width = `${((current+1)/questions.length)*100}%`;
+      document.getElementById('question').textContent = q.q;
+      document.getElementById('next-btn').style.display = 'none';
+      const opts = document.getElementById('options');
+      opts.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt;
+        btn.onclick = () => selectAnswer(i);
+        opts.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(i) {
+      if (answered) return;
+      answered = true;
+      const btns = document.querySelectorAll('.option-btn');
+      btns.forEach(b => b.disabled = true);
+      if (i === questions[current].answer) {
+        btns[i].classList.add('correct');
+        score++;
+        document.getElementById('score').textContent = score;
+      } else {
+        btns[i].classList.add('wrong');
+        btns[questions[current].answer].classList.add('correct');
+      }
+      document.getElementById('next-btn').style.display = 'block';
+      document.getElementById('next-btn').textContent = current === questions.length - 1 ? 'See Results' : 'Next Question \u2192';
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current < questions.length) { loadQuestion(); }
+      else { showResult(); }
+    }
+
+    function showResult() {
+      document.getElementById('quiz-screen').style.display = 'none';
+      document.getElementById('result-screen').style.display = 'block';
+      document.getElementById('final-score').textContent = `${score} / ${questions.length}`;
+      const pct = (score / questions.length) * 100;
+      document.getElementById('result-msg').textContent = pct === 100 ? 'Perfect score! Outstanding!' : pct >= 60 ? 'Good job! Keep it up!' : 'Keep practicing, you can do better!';
+    }
+
+    function restartQuiz() {
+      current = 0; score = 0;
+      document.getElementById('score').textContent = 0;
+      document.getElementById('quiz-screen').style.display = 'block';
+      document.getElementById('result-screen').style.display = 'none';
+      loadQuestion();
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>

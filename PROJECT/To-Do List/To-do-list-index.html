@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List App</title>
+  <style>
+    /* ===== PROJECT NAVBAR ===== */
+    .proj-nav {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 999;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99,102,241,0.12);
+      box-shadow: 0 2px 12px rgba(99,102,241,0.08);
+    }
+    .proj-nav-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 24px; height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .proj-nav-brand {
+      font-size: 1.1rem; font-weight: 800;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; text-decoration: none;
+    }
+    .proj-nav-title {
+      font-size: 0.85rem; font-weight: 600; color: #6b7280;
+      background: rgba(99,102,241,0.08); padding: 4px 14px;
+      border-radius: 999px; border: 1px solid rgba(99,102,241,0.15);
+    }
+    .proj-nav-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.85rem; font-weight: 600; color: #6366f1;
+      text-decoration: none; padding: 7px 16px; border-radius: 10px;
+      border: 1.5px solid #e0e7ff; background: #fafbff; transition: all 0.2s;
+    }
+    .proj-nav-back:hover { background: #eef2ff; border-color: #6366f1; }
+    /* ========================= */
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f0f4ff, #f5f3ff);
+      min-height: 100vh;
+      padding-top: 58px;
+    }
+
+    .container {
+      max-width: 620px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    .app-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .app-header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+    .app-header p {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-pill {
+      flex: 1;
+      background: #fff;
+      border-radius: 14px;
+      padding: 14px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(99,102,241,0.07);
+      border: 1px solid #e5e7eb;
+    }
+    .stat-pill .num {
+      font-size: 1.6rem;
+      font-weight: 800;
+      display: block;
+    }
+    .stat-pill .lbl {
+      font-size: 0.72rem;
+      color: #9ca3af;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .stat-total   .num { color: #6366f1; }
+    .stat-active  .num { color: #f59e0b; }
+    .stat-done    .num { color: #10b981; }
+
+    /* Input box */
+    .input-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(99,102,241,0.07);
+      border: 1px solid #e5e7eb;
+      display: flex;
+      gap: 10px;
+    }
+    .input-box input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-family: 'Segoe UI', sans-serif;
+      color: #111827;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .input-box input:focus { border-color: #6366f1; }
+    .input-box input::placeholder { color: #9ca3af; }
+    .add-btn {
+      padding: 12px 22px;
+      background: linear-gradient(135deg, #6366f1, #7c3aed);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s, transform 0.2s;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .add-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* Filter tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .filter-tab {
+      padding: 7px 18px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid #e5e7eb;
+      background: #fff;
+      color: #6b7280;
+      transition: all 0.2s;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .filter-tab.active {
+      background: linear-gradient(135deg, #6366f1, #7c3aed);
+      color: #fff;
+      border-color: transparent;
+    }
+    .filter-tab:hover:not(.active) { border-color: #6366f1; color: #6366f1; }
+
+    /* Task list */
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .task-item {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 10px rgba(99,102,241,0.06);
+      border: 1px solid #e5e7eb;
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .task-item:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.1); }
+    .task-item.done { opacity: 0.6; }
+    .task-item.done .task-text { text-decoration: line-through; color: #9ca3af; }
+
+    /* Checkbox */
+    .task-check {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid #d1d5db;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      background: #fff;
+    }
+    .task-check.checked {
+      background: linear-gradient(135deg, #10b981, #34d399);
+      border-color: transparent;
+    }
+    .task-check.checked::after {
+      content: '✓';
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .task-text {
+      flex: 1;
+      font-size: 0.95rem;
+      color: #1f2937;
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    /* Priority badge */
+    .task-priority {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .priority-high   { background: #fee2e2; color: #991b1b; }
+    .priority-medium { background: #fef3c7; color: #92400e; }
+    .priority-low    { background: #d1fae5; color: #065f46; }
+
+    /* Delete btn */
+    .task-delete {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      border: none;
+      background: #fee2e2;
+      color: #ef4444;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .task-delete:hover { background: #fecaca; transform: scale(1.1); }
+
+    /* Priority selector */
+    .priority-select {
+      padding: 8px 10px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-family: 'Segoe UI', sans-serif;
+      color: #374151;
+      outline: none;
+      cursor: pointer;
+      background: #fff;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 0;
+      color: #9ca3af;
+    }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+    .empty-state p { font-size: 0.95rem; }
+
+    /* Clear completed */
+    .bottom-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      padding: 0 4px;
+    }
+    .bottom-bar span { font-size: 0.82rem; color: #9ca3af; }
+    .clear-btn {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #ef4444;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .clear-btn:hover { background: #fee2e2; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="proj-nav">
+    <div class="proj-nav-inner">
+      <a href="../../index.html" class="proj-nav-brand">Ritu Raj</a>
+      <span class="proj-nav-title">To-Do List App</span>
+      <a href="../../index.html#mini-projects" class="proj-nav-back">&#8592; Back to Portfolio</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <div class="app-header">
+      <h1>&#9989; My Tasks</h1>
+      <p>Stay organized and get things done</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-pill stat-total">
+        <span class="num" id="stat-total">0</span>
+        <span class="lbl">Total</span>
+      </div>
+      <div class="stat-pill stat-active">
+        <span class="num" id="stat-active">0</span>
+        <span class="lbl">Active</span>
+      </div>
+      <div class="stat-pill stat-done">
+        <span class="num" id="stat-done">0</span>
+        <span class="lbl">Done</span>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="input-box">
+      <input type="text" id="task-input" placeholder="Add a new task..." onkeydown="if(event.key==='Enter') addTask()">
+      <select class="priority-select" id="priority-select">
+        <option value="medium">&#128992; Medium</option>
+        <option value="high">&#128308; High</option>
+        <option value="low">&#128994; Low</option>
+      </select>
+      <button class="add-btn" onclick="addTask()">+ Add</button>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="setFilter('all', this)">All</button>
+      <button class="filter-tab" onclick="setFilter('active', this)">Active</button>
+      <button class="filter-tab" onclick="setFilter('done', this)">Completed</button>
+    </div>
+
+    <!-- Task list -->
+    <div class="task-list" id="task-list"></div>
+
+    <!-- Bottom bar -->
+    <div class="bottom-bar">
+      <span id="remaining-text"></span>
+      <button class="clear-btn" onclick="clearCompleted()">Clear Completed</button>
+    </div>
+
+  </div>
+
+  <script>
+    let tasks = JSON.parse(localStorage.getItem('todo_tasks') || '[]');
+    let filter = 'all';
+
+    function save() {
+      localStorage.setItem('todo_tasks', JSON.stringify(tasks));
+    }
+
+    function addTask() {
+      const input = document.getElementById('task-input');
+      const text = input.value.trim();
+      if (!text) { input.focus(); return; }
+      const priority = document.getElementById('priority-select').value;
+      tasks.unshift({ id: Date.now(), text, done: false, priority });
+      input.value = '';
+      save(); render();
+    }
+
+    function toggleTask(id) {
+      const t = tasks.find(t => t.id === id);
+      if (t) { t.done = !t.done; save(); render(); }
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter(t => t.id !== id);
+      save(); render();
+    }
+
+    function clearCompleted() {
+      tasks = tasks.filter(t => !t.done);
+      save(); render();
+    }
+
+    function setFilter(f, btn) {
+      filter = f;
+      document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    }
+
+    function render() {
+      const total  = tasks.length;
+      const done   = tasks.filter(t => t.done).length;
+      const active = total - done;
+
+      document.getElementById('stat-total').textContent  = total;
+      document.getElementById('stat-active').textContent = active;
+      document.getElementById('stat-done').textContent   = done;
+      document.getElementById('remaining-text').textContent = `${active} task${active !== 1 ? 's' : ''} remaining`;
+
+      let filtered = tasks;
+      if (filter === 'active') filtered = tasks.filter(t => !t.done);
+      if (filter === 'done')   filtered = tasks.filter(t => t.done);
+
+      const list = document.getElementById('task-list');
+
+      if (!filtered.length) {
+        const msgs = { all: 'No tasks yet. Add one above!', active: 'No active tasks!', done: 'No completed tasks yet.' };
+        list.innerHTML = `<div class="empty-state"><div class="icon">&#128203;</div><p>${msgs[filter]}</p></div>`;
+        return;
+      }
+
+      const priorityLabel = { high: 'High', medium: 'Medium', low: 'Low' };
+      const priorityClass = { high: 'priority-high', medium: 'priority-medium', low: 'priority-low' };
+
+      list.innerHTML = filtered.map(t => `
+        <div class="task-item ${t.done ? 'done' : ''}">
+          <div class="task-check ${t.done ? 'checked' : ''}" onclick="toggleTask(${t.id})"></div>
+          <span class="task-text">${escHtml(t.text)}</span>
+          <span class="task-priority ${priorityClass[t.priority]}">${priorityLabel[t.priority]}</span>
+          <button class="task-delete" onclick="deleteTask(${t.id})">&#10005;</button>
+        </div>
+      `).join('');
+    }
+
+    function escHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    render();
+  </script>
+</body>
+</html>

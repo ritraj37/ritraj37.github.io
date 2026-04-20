@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Guess the Number Pro</title>
+  <style>
+    /* ===== PROJECT NAVBAR ===== */
+    .proj-nav {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 999;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99,102,241,0.12);
+      box-shadow: 0 2px 12px rgba(99,102,241,0.08);
+    }
+    .proj-nav-inner {
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 24px; height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .proj-nav-brand {
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 1.1rem; font-weight: 800;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; text-decoration: none;
+    }
+    .proj-nav-title {
+      font-size: 0.85rem; font-weight: 600; color: #6b7280;
+      background: rgba(99,102,241,0.08);
+      padding: 4px 14px; border-radius: 999px;
+      border: 1px solid rgba(99,102,241,0.15);
+    }
+    .proj-nav-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.85rem; font-weight: 600;
+      color: #6366f1; text-decoration: none;
+      padding: 7px 16px; border-radius: 10px;
+      border: 1.5px solid #e0e7ff; background: #fafbff;
+      transition: all 0.2s;
+    }
+    .proj-nav-back:hover { background: #eef2ff; border-color: #6366f1; }
+    /* ========================= */
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #141E30, #243B55);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding-top: 58px;
+    }
+    .game-box {
+      background: rgba(255,255,255,0.1);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+      text-align: center;
+      width: 400px;
+      animation: fadeIn 1s ease;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2em;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    }
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      width: 120px;
+      text-align: center;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #f39c12;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #e67e22;
+      transform: scale(1.05);
+    }
+    .message {
+      margin-top: 20px;
+      font-size: 18px;
+      min-height: 40px;
+    }
+    .scoreboard {
+      margin-top: 15px;
+      font-size: 16px;
+      color: #f1c40f;
+    }
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #27ae60;
+      color: #fff;
+      padding: 30px 50px;
+      border-radius: 12px;
+      font-size: 24px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+  </style>
+</head>
+<body>
+  <nav class="proj-nav">
+    <div class="proj-nav-inner">
+      <a href="../../index.html" class="proj-nav-brand">Ritu Raj</a>
+      <span class="proj-nav-title">Number Guessing Game</span>
+      <a href="../../index.html#mini-projects" class="proj-nav-back">&#8592; Back to Portfolio</a>
+    </div>
+  </nav>
+  <div class="game-box">
+    <h1>🎯 Guess the Number 🎯</h1>
+    <p>I have chosen a number between 1 and 100.</p>
+    <input type="number" id="guess" min="1" max="100" placeholder="Enter guess">
+    <br>
+    <button onclick="checkGuess()">Submit Guess</button>
+    <div class="message" id="message">Start guessing!</div>
+    <div class="scoreboard" id="scoreboard">Attempts: 0 | Wins: 0</div>
+  </div>
+
+  <div class="popup" id="popup">🎉 Congratulations! You guessed it! 🎉</div>
+
+  <script>
+    let secretNumber = Math.floor(Math.random() * 100) + 1;
+    let attempts = 0;
+    let wins = 0;
+
+    function checkGuess() {
+      const guess = parseInt(document.getElementById("guess").value);
+      const message = document.getElementById("message");
+
+      if (isNaN(guess)) {
+        message.textContent = "Please enter a valid number.";
+        return;
+      }
+
+      attempts++;
+
+      if (guess === secretNumber) {
+        wins++;
+        showPopup();
+        message.textContent = `Correct! You found it in ${attempts} attempts.`;
+        updateScoreboard();
+        setTimeout(() => {
+          secretNumber = Math.floor(Math.random() * 100) + 1;
+          attempts = 0;
+          message.textContent = "New number chosen. Try again!";
+        }, 2000);
+      } else if (guess < secretNumber) {
+        message.textContent = "Too low! Try again.";
+      } else {
+        message.textContent = "Too high! Try again.";
+      }
+
+      updateScoreboard();
+    }
+
+    function updateScoreboard() {
+      document.getElementById("scoreboard").textContent = `Attempts: ${attempts} | Wins: ${wins}`;
+    }
+
+    function showPopup() {
+      const popup = document.getElementById("popup");
+      popup.style.display = "block";
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

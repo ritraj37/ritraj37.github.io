@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Modern Clock Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #0f1117;
+      color: #e8e6f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== PROJECT NAVBAR ===== */
+    .proj-nav {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 999;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99,102,241,0.12);
+      box-shadow: 0 2px 12px rgba(99,102,241,0.08);
+    }
+    .proj-nav-inner {
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 24px; height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .proj-nav-brand {
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 1.1rem; font-weight: 800;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; text-decoration: none;
+    }
+    .proj-nav-title {
+      font-size: 0.85rem; font-weight: 600; color: #6b7280;
+      background: rgba(99,102,241,0.08);
+      padding: 4px 14px; border-radius: 999px;
+      border: 1px solid rgba(99,102,241,0.15);
+    }
+    .proj-nav-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.85rem; font-weight: 600;
+      color: #6366f1; text-decoration: none;
+      padding: 7px 16px; border-radius: 10px;
+      border: 1.5px solid #e0e7ff; background: #fafbff;
+      transition: all 0.2s;
+    }
+    .proj-nav-back:hover { background: #eef2ff; border-color: #6366f1; }
+    /* ========================= */
+
+    /* Dashboard layout */
+    .dashboard {
+      display: flex;
+      flex: 1;
+    }
+
+    /* Left panel */
+    .left-panel {
+      flex: 2;
+      background-color: #161822;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .left-panel::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image: radial-gradient(circle at 30% 40%, #6c5ce7 0%, transparent 60%);
+      opacity: 0.04;
+    }
+    .date-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 120px;
+      font-weight: 700;
+      color: #e8e6f0;
+      z-index: 1;
+    }
+    .day-name {
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      font-size: 14px;
+      margin-bottom: 20px;
+      color: #6c5ce7;
+      z-index: 1;
+    }
+    .month-year {
+      font-size: 20px;
+      color: #7a7890;
+      z-index: 1;
+    }
+    .week-info {
+      margin-top: 20px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #4a4860;
+      z-index: 1;
+    }
+
+    /* Right panel */
+    .right-panel {
+      flex: 3;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px;
+      gap: 30px;
+    }
+    .time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 72px;
+      font-weight: 300;
+      color: #e8e6f0;
+    }
+    .colon {
+      color: #6c5ce7;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .seconds {
+      font-size: 28px;
+      color: #4a4860;
+      margin-left: 10px;
+    }
+    .ampm {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #6c5ce7;
+      margin-left: 10px;
+    }
+    .timezone {
+      font-size: 12px;
+      color: #4a4860;
+      margin-top: 5px;
+    }
+
+    /* Info cards */
+    .cards {
+      display: flex;
+      gap: 20px;
+    }
+    .card {
+      flex: 1;
+      background-color: #1a1d2e;
+      border: 1px solid #252840;
+      border-radius: 12px;
+      padding: 20px;
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+    }
+    .card-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 10px;
+    }
+    .card-text {
+      font-size: 14px;
+      color: #b0adc4;
+      line-height: 1.5;
+    }
+    .holiday .card-title { color: #6c5ce7; }
+    .national .card-title { color: #fd9644; }
+    .history .card-title { color: #26de81; }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="proj-nav">
+    <div class="proj-nav-inner">
+      <a href="../../index.html" class="proj-nav-brand">Ritu Raj</a>
+      <span class="proj-nav-title">Digital Clock</span>
+      <a href="../../index.html#mini-projects" class="proj-nav-back">&#8592; Back to Portfolio</a>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <!-- Left Panel -->
+    <div class="left-panel">
+      <div class="day-name" id="day-name">Loading...</div>
+      <div class="date-num" id="date-num">00</div>
+      <div class="month-year" id="month-year">Month Year</div>
+      <div class="week-info" id="week-info">Week info</div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="right-panel">
+      <div>
+        <span class="time" id="hours">00</span>
+        <span class="colon">:</span>
+        <span class="time" id="minutes">00</span>
+        <span class="seconds" id="seconds">00</span>
+        <span class="ampm" id="ampm">AM</span>
+        <div class="timezone" id="timezone-info"></div>
+      </div>
+
+      <div class="cards">
+        <div class="card holiday">
+          <div class="card-title" id="holiday-title">Holiday</div>
+          <div class="card-text" id="holiday-text">World Music Day — Celebrating the universal language of music.</div>
+        </div>
+        <div class="card national">
+          <div class="card-title" id="national-day-title">National Day</div>
+          <div class="card-text" id="national-day-text">National Selfie Day — Snap your best angle!</div>
+        </div>
+        <div class="card history">
+          <div class="card-title" id="history-title">This Day in History</div>
+          <div class="card-text" id="history-text">1969 — Humans first set foot on the Moon.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      let h = now.getHours();
+      const m = now.getMinutes();
+      const s = now.getSeconds();
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+
+      document.getElementById('hours').textContent = String(h).padStart(2, '0');
+      document.getElementById('minutes').textContent = String(m).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(s).padStart(2, '0');
+      document.getElementById('ampm').textContent = ampm;
+
+      const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+      document.getElementById('day-name').textContent = days[now.getDay()];
+      document.getElementById('date-num').textContent = String(now.getDate()).padStart(2, '0');
+      document.getElementById('month-year').textContent = `${months[now.getMonth()]} ${now.getFullYear()}`;
+
+      const oneJan = new Date(now.getFullYear(), 0, 1);
+      const weekNum = Math.ceil(((now - oneJan) / 86400000 + oneJan.getDay() + 1) / 7);
+      document.getElementById('week-info').textContent = `Week ${weekNum} of ${now.getFullYear()}`;
+
+      try {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        document.getElementById('timezone-info').textContent = tz.replace('_', ' ');
+      } catch(e) {}
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>

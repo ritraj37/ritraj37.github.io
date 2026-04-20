@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes App</title>
+  <style>
+    /* ===== PROJECT NAVBAR ===== */
+    .proj-nav {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 999;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99,102,241,0.12);
+      box-shadow: 0 2px 12px rgba(99,102,241,0.08);
+    }
+    .proj-nav-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 24px; height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .proj-nav-brand {
+      font-size: 1.1rem; font-weight: 800;
+      background: linear-gradient(135deg,#6366f1,#8b5cf6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; text-decoration: none;
+    }
+    .proj-nav-title {
+      font-size: 0.85rem; font-weight: 600; color: #6b7280;
+      background: rgba(99,102,241,0.08); padding: 4px 14px;
+      border-radius: 999px; border: 1px solid rgba(99,102,241,0.15);
+    }
+    .proj-nav-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.85rem; font-weight: 600; color: #6366f1;
+      text-decoration: none; padding: 7px 16px; border-radius: 10px;
+      border: 1.5px solid #e0e7ff; background: #fafbff; transition: all 0.2s;
+    }
+    .proj-nav-back:hover { background: #eef2ff; border-color: #6366f1; }
+    /* ========================= */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; min-height: 100vh; padding-top: 58px; }
+
+    header {
+      background: linear-gradient(135deg, #f97316, #fb923c);
+      color: #fff;
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 16px rgba(249,115,22,0.3);
+    }
+    header h1 { font-size: 1.4rem; font-weight: 700; }
+    header span { font-size: 0.85rem; opacity: 0.85; }
+
+    .container { max-width: 900px; margin: 32px auto; padding: 0 20px; }
+
+    .add-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .add-box input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: 'Segoe UI', sans-serif;
+      margin-bottom: 10px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .add-box input:focus { border-color: #f97316; }
+    .add-box textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-family: 'Segoe UI', sans-serif;
+      resize: none;
+      height: 90px;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 12px;
+    }
+    .add-box textarea:focus { border-color: #f97316; }
+    .add-box button {
+      padding: 10px 24px;
+      background: linear-gradient(135deg, #f97316, #fb923c);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .add-box button:hover { opacity: 0.9; }
+
+    .notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+
+    .note-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border-top: 4px solid #f97316;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .note-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    .note-card h3 { font-size: 0.95rem; font-weight: 700; color: #111827; margin-bottom: 8px; }
+    .note-card p  { font-size: 0.85rem; color: #6b7280; line-height: 1.6; white-space: pre-wrap; }
+    .note-card .note-date { font-size: 0.72rem; color: #9ca3af; margin-top: 12px; }
+    .note-actions { display: flex; gap: 8px; margin-top: 14px; }
+    .note-actions button {
+      flex: 1;
+      padding: 6px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-edit   { background: #fef3c7; color: #92400e; }
+    .btn-delete { background: #fee2e2; color: #991b1b; }
+    .btn-edit:hover, .btn-delete:hover { opacity: 0.8; }
+
+    .empty { text-align: center; color: #9ca3af; padding: 60px 0; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <nav class="proj-nav">
+    <div class="proj-nav-inner">
+      <a href="../../index.html" class="proj-nav-brand">Ritu Raj</a>
+      <span class="proj-nav-title">Notes App</span>
+      <a href="../../index.html#mini-projects" class="proj-nav-back">&#8592; Back to Portfolio</a>
+    </div>
+  </nav>
+  <header>
+    <h1>&#128221; Notes App</h1>
+    <span id="note-count">0 notes</span>
+  </header>
+
+  <div class="container">
+    <div class="add-box">
+      <input type="text" id="note-title" placeholder="Note title...">
+      <textarea id="note-body" placeholder="Write your note here..."></textarea>
+      <button onclick="addNote()">+ Add Note</button>
+    </div>
+    <div class="notes-grid" id="notes-grid"></div>
+    <div class="empty" id="empty-msg">No notes yet. Add your first note above!</div>
+  </div>
+
+  <script>
+    let notes = JSON.parse(localStorage.getItem('notes_app') || '[]');
+    let editId = null;
+
+    function render() {
+      const grid = document.getElementById('notes-grid');
+      const empty = document.getElementById('empty-msg');
+      document.getElementById('note-count').textContent = `${notes.length} note${notes.length !== 1 ? 's' : ''}`;
+      if (!notes.length) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+      grid.innerHTML = notes.map((n, i) => `
+        <div class="note-card">
+          <h3>${n.title || 'Untitled'}</h3>
+          <p>${n.body}</p>
+          <div class="note-date">${n.date}</div>
+          <div class="note-actions">
+            <button class="btn-edit" onclick="editNote(${i})">Edit</button>
+            <button class="btn-delete" onclick="deleteNote(${i})">Delete</button>
+          </div>
+        </div>`).join('');
+    }
+
+    function addNote() {
+      const title = document.getElementById('note-title').value.trim();
+      const body  = document.getElementById('note-body').value.trim();
+      if (!body) { alert('Note cannot be empty!'); return; }
+      const date = new Date().toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+      if (editId !== null) {
+        notes[editId] = { title, body, date };
+        editId = null;
+        document.querySelector('.add-box button').textContent = '+ Add Note';
+      } else {
+        notes.unshift({ title, body, date });
+      }
+      document.getElementById('note-title').value = '';
+      document.getElementById('note-body').value = '';
+      save(); render();
+    }
+
+    function editNote(i) {
+      editId = i;
+      document.getElementById('note-title').value = notes[i].title;
+      document.getElementById('note-body').value  = notes[i].body;
+      document.querySelector('.add-box button').textContent = 'Update Note';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteNote(i) {
+      if (confirm('Delete this note?')) { notes.splice(i, 1); save(); render(); }
+    }
+
+    function save() { localStorage.setItem('notes_app', JSON.stringify(notes)); }
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <style>
+    /* ===== PROJECT NAVBAR ===== */
+    .proj-nav {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 999;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99,102,241,0.12);
+      box-shadow: 0 2px 12px rgba(99,102,241,0.08);
+    }
+    .proj-nav-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 24px; height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .proj-nav-brand {
+      font-size: 1.1rem; font-weight: 800;
+      background: linear-gradient(135deg,#6366f1,#8b5cf6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; text-decoration: none;
+    }
+    .proj-nav-title {
+      font-size: 0.85rem; font-weight: 600; color: #6b7280;
+      background: rgba(99,102,241,0.08); padding: 4px 14px;
+      border-radius: 999px; border: 1px solid rgba(99,102,241,0.15);
+    }
+    .proj-nav-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.85rem; font-weight: 600; color: #6366f1;
+      text-decoration: none; padding: 7px 16px; border-radius: 10px;
+      border: 1.5px solid #e0e7ff; background: #fafbff; transition: all 0.2s;
+    }
+    .proj-nav-back:hover { background: #eef2ff; border-color: #6366f1; }
+    /* ========================= */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 58px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 40px;
+      width: 380px;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.15);
+    }
+    h1 { font-size: 1.5rem; color: #1f2937; margin-bottom: 4px; }
+    .subtitle { font-size: 0.85rem; color: #9ca3af; margin-bottom: 24px; }
+
+    .scoreboard {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+      background: #f9fafb;
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .score-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .score-label { font-size: 0.75rem; color: #9ca3af; font-weight: 600; text-transform: uppercase; }
+    .score-val   { font-size: 1.6rem; font-weight: 800; }
+    .score-x  { color: #6366f1; }
+    .score-o  { color: #ec4899; }
+    .score-d  { color: #6b7280; }
+
+    .status {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 20px;
+      min-height: 28px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .cell {
+      aspect-ratio: 1;
+      background: #f3f4f6;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      border: 2px solid transparent;
+    }
+    .cell:hover:not(.taken) { background: #e0e7ff; transform: scale(1.04); }
+    .cell.x { color: #6366f1; border-color: #c7d2fe; background: #eef2ff; }
+    .cell.o { color: #ec4899; border-color: #fbcfe8; background: #fdf2f8; }
+    .cell.win { background: #fef9c3; border-color: #fde047; animation: winPulse 0.5s ease; }
+    @keyframes winPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+
+    .reset-btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .reset-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+  <nav class="proj-nav">
+    <div class="proj-nav-inner">
+      <a href="../../index.html" class="proj-nav-brand">Ritu Raj</a>
+      <span class="proj-nav-title">Tic Tac Toe</span>
+      <a href="../../index.html#mini-projects" class="proj-nav-back">&#8592; Back to Portfolio</a>
+    </div>
+  </nav>
+  <div class="card">
+    <p class="subtitle">Two player game &mdash; X vs O</p>
+
+    <div class="scoreboard">
+      <div class="score-item">
+        <span class="score-label">Player X</span>
+        <span class="score-val score-x" id="score-x">0</span>
+      </div>
+      <div class="score-item">
+        <span class="score-label">Draws</span>
+        <span class="score-val score-d" id="score-d">0</span>
+      </div>
+      <div class="score-item">
+        <span class="score-label">Player O</span>
+        <span class="score-val score-o" id="score-o">0</span>
+      </div>
+    </div>
+
+    <div class="status" id="status">Player X's turn</div>
+
+    <div class="board" id="board">
+      <div class="cell" onclick="play(0)"></div>
+      <div class="cell" onclick="play(1)"></div>
+      <div class="cell" onclick="play(2)"></div>
+      <div class="cell" onclick="play(3)"></div>
+      <div class="cell" onclick="play(4)"></div>
+      <div class="cell" onclick="play(5)"></div>
+      <div class="cell" onclick="play(6)"></div>
+      <div class="cell" onclick="play(7)"></div>
+      <div class="cell" onclick="play(8)"></div>
+    </div>
+
+    <button class="reset-btn" onclick="resetGame()">New Game</button>
+  </div>
+
+  <script>
+    const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    let board = Array(9).fill(''), current = 'X', gameOver = false;
+    let scores = { X: 0, O: 0, D: 0 };
+
+    function play(i) {
+      if (gameOver || board[i]) return;
+      board[i] = current;
+      const cells = document.querySelectorAll('.cell');
+      cells[i].textContent = current;
+      cells[i].classList.add(current.toLowerCase(), 'taken');
+
+      const winLine = checkWin();
+      if (winLine) {
+        winLine.forEach(idx => cells[idx].classList.add('win'));
+        document.getElementById('status').textContent = `Player ${current} wins! &#127881;`;
+        scores[current]++;
+        updateScores();
+        gameOver = true;
+      } else if (board.every(c => c)) {
+        document.getElementById('status').textContent = "It's a Draw!";
+        scores.D++;
+        updateScores();
+        gameOver = true;
+      } else {
+        current = current === 'X' ? 'O' : 'X';
+        document.getElementById('status').textContent = `Player ${current}'s turn`;
+      }
+    }
+
+    function checkWin() {
+      return wins.find(([a,b,c]) => board[a] && board[a] === board[b] && board[b] === board[c]) || null;
+    }
+
+    function updateScores() {
+      document.getElementById('score-x').textContent = scores.X;
+      document.getElementById('score-o').textContent = scores.O;
+      document.getElementById('score-d').textContent = scores.D;
+    }
+
+    function resetGame() {
+      board = Array(9).fill('');
+      current = 'X'; gameOver = false;
+      document.getElementById('status').textContent = "Player X's turn";
+      document.querySelectorAll('.cell').forEach(c => {
+        c.textContent = '';
+        c.className = 'cell';
+      });
+    }
+  </script>
+</body>
+</html>
