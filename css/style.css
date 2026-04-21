@@ -1697,7 +1697,12 @@ body {
   line-height: 1.65;
   flex: 1;
 }
-
+.mini-card-desc{
+  max-height: 80px;     /* jitni height chahiye */
+  overflow-y: auto;     /* vertical scroll enable */
+  line-height: 1.5;
+  padding-right: 5px;
+}
 /* Tags */
 .mini-card-tags {
   display: flex;
